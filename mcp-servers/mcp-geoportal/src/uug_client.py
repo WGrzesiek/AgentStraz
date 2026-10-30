@@ -5,7 +5,10 @@ Udostępnia funkcję zamiany adresu tekstowego na współrzędne WGS84 i PUWG 19
 
 import httpx
 from typing import Optional, Dict, Any, List
-from .coords import puwg1992_to_wgs84, wgs84_to_puwg1992
+try:
+    from .coords import puwg1992_to_wgs84, wgs84_to_puwg1992
+except (ImportError, ValueError):
+    from coords import puwg1992_to_wgs84, wgs84_to_puwg1992
 
 
 class GeocodingResult:

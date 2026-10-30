@@ -7,7 +7,10 @@ przez zapytania OGC WMS (GetFeatureInfo oraz GetMap).
 import httpx
 from typing import Dict, Any, List, Optional
 from urllib.parse import urlencode
-from .coords import wgs84_to_puwg1992
+try:
+    from .coords import wgs84_to_puwg1992
+except (ImportError, ValueError):
+    from coords import wgs84_to_puwg1992
 
 KIUT_WMS_URL = "https://integracja.gugik.gov.pl/cgi-bin/KrajowaIntegracjaUzbrojeniaTerenu"
 

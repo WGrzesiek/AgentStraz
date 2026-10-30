@@ -6,7 +6,10 @@ obrębu oraz geometrii obrysu (WKT).
 
 import httpx
 from typing import Optional, Dict, Any
-from .coords import wgs84_to_puwg1992
+try:
+    from .coords import wgs84_to_puwg1992
+except (ImportError, ValueError):
+    from coords import wgs84_to_puwg1992
 
 
 class ParcelInfo:

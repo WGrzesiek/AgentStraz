@@ -5,7 +5,10 @@ Pobiera dane synoptyczne ze stacji telemetrycznych w czasie rzeczywistym.
 
 import httpx
 from typing import Dict, Any, Optional
-from .stations import find_nearest_imgw_station
+try:
+    from .stations import find_nearest_imgw_station
+except (ImportError, ValueError):
+    from stations import find_nearest_imgw_station
 
 
 async def get_imgw_weather(lat: float, lon: float, timeout_sec: float = 6.0) -> Optional[Dict[str, Any]]:

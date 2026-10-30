@@ -5,7 +5,10 @@ Obsługuje zapytania przestrzenne z rotacją serwerów lustrzanych (mirroring) i
 
 import httpx
 from typing import Dict, Any, List, Optional
-from .water_supply import parse_hydrant_data, parse_water_source
+try:
+    from .water_supply import parse_hydrant_data, parse_water_source
+except (ImportError, ValueError):
+    from water_supply import parse_hydrant_data, parse_water_source
 
 OVERPASS_SERVERS = [
     "https://overpass-api.de/api/interpreter",
