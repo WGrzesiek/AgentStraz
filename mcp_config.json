@@ -1,0 +1,37 @@
+{
+  "mcpServers": {
+    "geoportal-gov-pl": {
+      "command": "uv",
+      "args": [
+        "run",
+        "--directory",
+        "mcp-servers/mcp-geoportal",
+        "python",
+        "-m",
+        "src.server"
+      ]
+    },
+    "osm-fire-recon": {
+      "command": "uv",
+      "args": [
+        "run",
+        "--directory",
+        "mcp-servers/mcp-osm-fire-recon",
+        "python",
+        "-m",
+        "src.server"
+      ]
+    },
+    "weather-safety": {
+      "command": "uv",
+      "args": [
+        "run",
+        "--directory",
+        "mcp-servers/mcp-weather-safety",
+        "python",
+        "-m",
+        "src.server"
+      ]
+    }
+  }
+}
