@@ -1,0 +1,96 @@
+{
+  "incident_info": {
+    "title": "Pożar budynku mieszkalnego jednorodzinnego",
+    "call_code": "MZ-POZAR-BUD_MIESZK",
+    "dispatch_time": "14:22",
+    "address": "Nowa Wieś, ul. Sosnowa 14",
+    "city": "Nowa Wieś",
+    "street": "ul. Sosnowa 14",
+    "municipality": "gm. Halinów, pow. miński",
+    "lat": 52.2319,
+    "lon": 21.0067,
+    "parcel_id": "145/2",
+    "cadastral_district": "0012 Dębe Wielkie"
+  },
+  "weather": {
+    "station_name": "Stacja IMGW Warszawa-Okęcie / Mińsk Maz.",
+    "station_distance_km": 4.2,
+    "wind_direction_text": "Północno-zachodni",
+    "wind_direction_abbr": "NW",
+    "wind_deg": 315,
+    "wind_speed_kmh": 18,
+    "wind_speed_ms": 5.0,
+    "wind_gusts_kmh": 36,
+    "temperature_c": 19.5,
+    "humidity_pct": 42,
+    "smoke_sector": "SE (Południowy Wschód, 135°)",
+    "smoke_threat_objects": [
+      "Posesja ul. Sosnowa 16 (zabudowa drewniana, 25m)",
+      "Posesja ul. Sosnowa 18 (stodoła murowana, 60m)",
+      "Uprawy leśne i młodnik sosnowy (sektor zawietrzny SE, 120m)"
+    ]
+  },
+  "water_supply": {
+    "hydrants": [
+      {
+        "id": "H1",
+        "type": "nadziemny",
+        "diameter": "DN80",
+        "distance_m": 95,
+        "estimated_w75_hoses": 6,
+        "requires_standpipe_and_key": false,
+        "location_desc": "ul. Sosnowa 8, pobocze przed wjazdem",
+        "status": "sprawny",
+        "bearing_deg": 280
+      },
+      {
+        "id": "H2",
+        "type": "podziemny",
+        "diameter": "DN100",
+        "distance_m": 210,
+        "estimated_w75_hoses": 13,
+        "requires_standpipe_and_key": true,
+        "location_desc": "Skrzyżowanie ul. Sosnowa i Leśna",
+        "status": "wymaga stojaka",
+        "bearing_deg": 45
+      }
+    ],
+    "open_water_intakes": [
+      {
+        "id": "W1",
+        "name": "Rzeka Mienia / Ciek Czarna",
+        "type": "Ciek naturalny",
+        "distance_m": 420,
+        "direction": "Wschód (E)",
+        "bearing_deg": 95,
+        "suction_method": "Motopompa M16/8, pompa pływająca Niagara",
+        "access_road": "Dojazd utwardzony od ul. Młyńskiej, skarpa brzegowa ok. 2m"
+      }
+    ]
+  },
+  "utilities_and_hazards": {
+    "gas": {
+      "detected": true,
+      "pipeline_type": "Gazociąg średniego ciśnienia (ś/c) PE DN63",
+      "location": "W pasie drogowym ul. Sosnowa",
+      "valve_location": "Zasuwa przyłącza i skrzynka gazowa w linii ogrodzenia (żółty słupek)",
+      "risk_level": "Wysokie (odciąć zasilanie gazowe na przyłączu!)"
+    },
+    "electricity": {
+      "lines": "Linia napowietrzna nN (niski poziom) wzdłuż drogi dojazdowej",
+      "substation_trafo": "Stacja transformatorowa słupowa 15/0.4 kV w odległości 130m na północ (nr ST-442)",
+      "cautions": "Zakaz podawania zwartego prądu gaśniczego do czasu potwierdzenia wyłączenia zasilania (KDR: sprawdzić skrzynkę ZK)",
+      "risk_level": "Średnie"
+    },
+    "access_roads": {
+      "road_type": "Droga gminna asfaltowa, szerokość 4.5 m",
+      "gcba_access": "Wjazd dla ciężkich samochodów gaśniczych GCBA bez utrudnień",
+      "bottlenecks": "Brama posesji: prześwit 3.4 m, rowek odwadniający nieutwardzony po lewej stronie"
+    },
+    "additional_hazards": [
+      "Butle z propan-butanem (11 kg) w przyległym garażu blaszaku",
+      "Instalacja fotowoltaiczna 7.5 kWp na połaci dachu (napięcie stałe DC do inwertera)"
+    ]
+  },
+  "is_demo": true
+}

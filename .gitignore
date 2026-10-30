@@ -24,3 +24,10 @@ share/python-wheels/
 venv/
 ENV/
 .DS_Store
+
+# Oryginalne paczki importu i raporty robocze
+/do polaczenia/
+/reports/
+.pytest_cache/
+
+.idea/

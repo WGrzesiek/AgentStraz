@@ -1,0 +1,97 @@
+{
+  "incident_info": {
+    "title": "Pożar hali stolarni i składu drewna",
+    "call_code": "MZ-POZAR-PRODUKCJA",
+    "dispatch_time": "11:05",
+    "address": "Halinów, ul. Piłsudskiego 48",
+    "city": "Halinów",
+    "street": "ul. Piłsudskiego 48",
+    "municipality": "gm. Halinów, pow. miński",
+    "lat": 52.2285,
+    "lon": 21.354,
+    "parcel_id": "312/4",
+    "cadastral_district": "0004 Halinów"
+  },
+  "weather": {
+    "station_name": "Stacja IMGW Sulejówek / Mińsk Maz.",
+    "station_distance_km": 5.8,
+    "wind_direction_text": "Zachodni",
+    "wind_direction_abbr": "W",
+    "wind_deg": 260,
+    "wind_speed_kmh": 24,
+    "wind_speed_ms": 6.7,
+    "wind_gusts_kmh": 48,
+    "temperature_c": 16.2,
+    "humidity_pct": 38,
+    "smoke_sector": "E (Wschód, ~80°)",
+    "smoke_threat_objects": [
+      "Skład tarcicy i palet drewnianych w sektorze zawietrznym (odl. 45 m na wschód)",
+      "Sąsiednia hala magazynowa ul. Piłsudskiego 50 (odl. 90 m)",
+      "Lokalna stacja paliw (sektor ENE, odl. 260 m - monitorować zarzewia ognia!)"
+    ]
+  },
+  "water_supply": {
+    "hydrants": [
+      {
+        "id": "H1",
+        "type": "nadziemny",
+        "diameter": "DN100",
+        "distance_m": 80,
+        "estimated_w75_hoses": 5,
+        "requires_standpipe_and_key": false,
+        "location_desc": "ul. Piłsudskiego 42, naprzeciwko bramy",
+        "status": "sprawny",
+        "bearing_deg": 250
+      },
+      {
+        "id": "H2",
+        "type": "podziemny",
+        "diameter": "DN80",
+        "distance_m": 190,
+        "estimated_w75_hoses": 11,
+        "requires_standpipe_and_key": true,
+        "location_desc": "Zbieg ul. Piłsudskiego i Polnej (chodnik)",
+        "status": "wymaga stojaka",
+        "bearing_deg": 320
+      }
+    ],
+    "open_water_intakes": [
+      {
+        "id": "W1",
+        "name": "Staw ppoż. / zbiornik retencyjny",
+        "type": "Sztuczny zbiornik ppoż.",
+        "distance_m": 310,
+        "direction": "Południe (S)",
+        "bearing_deg": 175,
+        "suction_method": "Motopompa Tohatsu M16/8, punkt stały poboru wody",
+        "access_road": "Dojazd utwardzony płytami betonowymi, plac manewrowy dla autocysterny"
+      }
+    ]
+  },
+  "utilities_and_hazards": {
+    "gas": {
+      "detected": true,
+      "pipeline_type": "Gazociąg średniego ciśnienia ś/c PE DN90",
+      "location": "W pasie drogowym ul. Piłsudskiego",
+      "valve_location": "Główny zawór odcinający w żółtej szafce przy bramie wjazdowej (odcięcie natychmiastowe)",
+      "risk_level": "KRYTYCZNE - zakręcić zawór główny przed halą"
+    },
+    "electricity": {
+      "lines": "Kabel podziemny SN 15 kV + napowietrzna sieć oświetleniowa",
+      "substation_trafo": "Stacja transformatorowa kontenerowa 15/0.4 kV w odl. 85m (kierunek NW)",
+      "cautions": "Hala wyposażona w instalację PV 40 kWp na dachu (falowniki w osobnym pomieszczeniu technicznym na ścianie zachodniej)",
+      "risk_level": "Wysokie"
+    },
+    "access_roads": {
+      "road_type": "Droga powiatowa asfaltowa 6.0 m, pobocza utwardzone",
+      "gcba_access": "Pełna dostępność dla ciężkich samochodów GCBA i drabin mechanicznych SD-30",
+      "bottlenecks": "Brama wjazdowa szeroka (6.5 m), plac manewrowy przed halą utwardzony kostką"
+    },
+    "additional_hazards": [
+      "Zbiornik naziemny z olejem opałowym (2000 l) przy ścianie północnej",
+      "Silos na trociny i pył drzewny (strefa zagrożenia wybuchem EX)",
+      "Butle z gazami technicznymi (acetylen, tlen) w warsztacie podręcznym"
+    ]
+  },
+  "is_demo": true
+}

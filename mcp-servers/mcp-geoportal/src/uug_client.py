@@ -3,12 +3,40 @@ Klient Uniwersalnej Usługi Geokodowania (UUG) GUGiK oraz fallback Nominatim (OS
 Udostępnia funkcję zamiany adresu tekstowego na współrzędne WGS84 i PUWG 1992.
 """
 
-import httpx
+import asyncio
+import json
+import os
+import threading
+import time
+from functools import lru_cache
+from urllib.parse import urlencode
 from typing import Optional, Dict, Any, List
 try:
     from .coords import puwg1992_to_wgs84, wgs84_to_puwg1992
 except (ImportError, ValueError):
     from coords import puwg1992_to_wgs84, wgs84_to_puwg1992
+
+
+def parse_uug_response(data, address):
+    """UUG GetAddress zapisuje x=E, y=N, zgodnie z geometry_wkt POINT(E N)."""
+    results = data.get("results") if isinstance(data, dict) else None
+    if not isinstance(results, dict) or len(results) != 1:
+        return None
+    item = next(iter(results.values()))
+    east, north = float(item["x"]), float(item["y"])
+    lat, lon = puwg1992_to_wgs84(north, east)
+    if not (48.9 <= lat <= 55.1 and 14 <= lon <= 24.2):
+        return None
+    city = item.get("miejscowosc") or item.get("city", "")
+    street = item.get("ulica") or item.get("street", "")
+    house = item.get("numer") or item.get("number") or item.get("house_number", "")
+    full = ", ".join(filter(None, [city, f"ul. {street} {house}".strip() if street else str(house)]))
+    return GeocodingResult(lat, lon, north, east, full or address,
+                           city=city, street=street, house_number=str(house),
+                           postcode=item.get("code") or item.get("postcode", ""),
+                           teryt_simc=str(item.get("simc", "")),
+                           teryt_gmina=str(item.get("teryt") or item.get("terc", "")),
+                           source="GUGiK_UUG", raw=item)
 
 
 class GeocodingResult:
@@ -85,86 +113,16 @@ async def _geocode_uug(address: str, timeout_sec: float = 8.0) -> Optional[Geoco
     """
     Odpytanie oficjalnej usługi UUG GUGiK: https://services.gugik.gov.pl/uug/
     """
-    url = "https://services.gugik.gov.pl/uug"
-    params = {
-        "request": "GetAddress",
-        "address": address,
-    }
-    headers = {
-        "User-Agent": "MCP-Geoportal-FireRecon/1.0 (Straż Pożarna OSP/PSP Recon)",
-        "Accept": "application/json",
-    }
-
     try:
-        async with httpx.AsyncClient(timeout=timeout_sec) as client:
-            resp = await client.get(url, params=params, headers=headers)
-            if resp.status_code != 200:
-                return None
-            data = resp.json()
-
-            # Format odpowiedzi UUG GUGiK to zazwyczaj słownik z kluczem 'results' lub bezpośrednia lista
-            results = data.get("results") if isinstance(data, dict) else data
-            if not results or not isinstance(results, dict):
-                return None
-
-            # UUG zwraca słownik ID -> Obiekt punktu adresowego
-            # Pobieramy pierwszy/najbardziej pasujący element
-            first_key = next(iter(results))
-            item = results[first_key]
-
-            # Koordynaty w UUG są zazwyczaj w układzie 1992 (x, y) lub WGS84
-            # np. item['x'], item['y']
-            raw_x = item.get("x")
-            raw_y = item.get("y")
-
-            if raw_x is None or raw_y is None:
-                return None
-
-            val_x = float(raw_x)
-            val_y = float(raw_y)
-
-            # Rozpoznanie czy to 1992 czy WGS84:
-            # W PUWG 1992: X (Northing) ~ 150000..850000, Y (Easting) ~ 150000..900000
-            # W WGS84: Lat ~ 49..55, Lon ~ 14..25
-            if val_x > 1000 and val_y > 1000:
-                x_1992 = val_x
-                y_1992 = val_y
-                lat, lon = puwg1992_to_wgs84(x_1992, y_1992)
-            else:
-                lat = val_x if val_x > val_y else val_y
-                lon = val_y if val_x > val_y else val_x
-                x_1992, y_1992 = wgs84_to_puwg1992(lat, lon)
-
-            city = item.get("miejscowosc", "") or item.get("city", "")
-            street = item.get("ulica", "") or item.get("street", "")
-            house = item.get("numer", "") or item.get("house_number", "")
-            postcode = item.get("kod", "") or item.get("postcode", "")
-
-            full_addr_parts = [city]
-            if street:
-                full_addr_parts.append(f"ul. {street} {house}".strip())
-            elif house:
-                full_addr_parts.append(str(house))
-
-            full_address = ", ".join([p for p in full_addr_parts if p]) or address
-
-            return GeocodingResult(
-                lat=lat,
-                lon=lon,
-                x_1992=x_1992,
-                y_1992=y_1992,
-                full_address=full_address,
-                city=city,
-                street=street,
-                house_number=house,
-                postcode=postcode,
-                teryt_simc=str(item.get("simc", "")),
-                teryt_gmina=str(item.get("terc", "")),
-                source="GUGiK_UUG",
-                raw=item,
-            )
-
-    except Exception:
+        try:
+            from .building_client import _request
+        except ImportError:
+            from building_client import _request
+        from urllib.parse import urlencode
+        url = "https://services.gugik.gov.pl/uug?" + urlencode({"request": "GetAddress", "address": address})
+        raw = await asyncio.to_thread(_request, url, timeout=timeout_sec)
+        return parse_uug_response(json.loads(raw), address)
+    except (OSError, ValueError, KeyError, TypeError):
         return None
 
 
@@ -172,7 +130,7 @@ async def _geocode_nominatim(address: str, timeout_sec: float = 6.0) -> Optional
     """
     Awaryjne geokodowanie przez Nominatim OSM z ograniczeniem do Polski (countrycodes=pl).
     """
-    url = "https://nominatim.openstreetmap.org/search"
+    url = os.environ.get("NOMINATIM_SEARCH_URL", "https://nominatim.openstreetmap.org/search")
     params = {
         "q": address,
         "format": "jsonv2",
@@ -180,42 +138,66 @@ async def _geocode_nominatim(address: str, timeout_sec: float = 6.0) -> Optional
         "limit": 1,
         "addressdetails": 1,
     }
-    headers = {
-        "User-Agent": "MCP-Geoportal-FireRecon/1.0 (Straz Pozarna Recon)",
-    }
-
     try:
-        async with httpx.AsyncClient(timeout=timeout_sec) as client:
-            resp = await client.get(url, params=params, headers=headers)
-            if resp.status_code != 200:
-                return None
-            data = resp.json()
-            if not data or not isinstance(data, list):
-                return None
+        data = await asyncio.to_thread(_nominatim_search, url + "?" + urlencode(params), int(time.time() // 3600), timeout_sec)
+        if not data or not isinstance(data, list):
+            return None
 
-            top = data[0]
-            lat = float(top["lat"])
-            lon = float(top["lon"])
-            x_1992, y_1992 = wgs84_to_puwg1992(lat, lon)
+        top = data[0]
+        lat = float(top["lat"])
+        lon = float(top["lon"])
+        x_1992, y_1992 = wgs84_to_puwg1992(lat, lon)
 
-            addr_det = top.get("address", {})
-            city = addr_det.get("city") or addr_det.get("town") or addr_det.get("village", "")
-            street = addr_det.get("road", "")
-            house = addr_det.get("house_number", "")
-            postcode = addr_det.get("postcode", "")
+        addr_det = top.get("address", {})
+        city = addr_det.get("city") or addr_det.get("town") or addr_det.get("village", "")
+        street = addr_det.get("road", "")
+        house = addr_det.get("house_number", "")
+        postcode = addr_det.get("postcode", "")
 
-            return GeocodingResult(
-                lat=lat,
-                lon=lon,
-                x_1992=x_1992,
-                y_1992=y_1992,
-                full_address=top.get("display_name", address),
-                city=city,
-                street=street,
-                house_number=house,
-                postcode=postcode,
-                source="OSM_Nominatim_Fallback",
-                raw=top,
-            )
+        return GeocodingResult(
+            lat=lat,
+            lon=lon,
+            x_1992=x_1992,
+            y_1992=y_1992,
+            full_address=top.get("display_name", address),
+            city=city,
+            street=street,
+            house_number=house,
+            postcode=postcode,
+            source="OSM_Nominatim_Fallback",
+            raw=top,
+        )
     except Exception:
         return None
+
+
+_NOMINATIM_LOCK = threading.Lock()
+_NOMINATIM_LAST_REQUEST = 0.0
+
+
+@lru_cache(maxsize=256)
+def _nominatim_search(url, hour_bucket, timeout_sec):
+    # Cache i maksymalnie 1 żądanie/s w tym procesie (publiczna instancja OSM).
+    global _NOMINATIM_LAST_REQUEST
+    try:
+        from .building_client import _request
+    except ImportError:
+        from building_client import _request
+    import hashlib
+    from pathlib import Path
+    cache_dir = Path(os.environ.get("BUILDING_CACHE_DIR") or Path(__file__).resolve().parents[3] / "reports/cache/buildings")
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    cache_file = cache_dir / ("geocode-" + hashlib.sha256(url.encode()).hexdigest()[:24] + ".json")
+    with _NOMINATIM_LOCK:
+        if cache_file.exists() and time.time() - cache_file.stat().st_mtime < 3600:
+            try:
+                return json.loads(cache_file.read_text(encoding="utf-8"))
+            except (OSError, ValueError):
+                pass
+        remaining = 1.0 - (time.monotonic() - _NOMINATIM_LAST_REQUEST)
+        if remaining > 0:
+            time.sleep(remaining)
+        _NOMINATIM_LAST_REQUEST = time.monotonic()
+        result = json.loads(_request(url, timeout=timeout_sec))
+        cache_file.write_text(json.dumps(result, ensure_ascii=False), encoding="utf-8")
+        return result

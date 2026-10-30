@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="pl" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Karta Rozpoznania Bojowego KDR - Halinów, ul. Piłsudskiego 48</title>
+    <!-- Tailwind CSS (GStatic Allowlisted) -->
+    <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+    <style>
+        @media print {
+            .no-print { display: none !important; }
+            body { background: #FFFFFF !important; color: #000000 !important; }
+            .card-box { border: 1px solid #94A3B8 !important; background: #FFFFFF !important; color: #000000 !important; }
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased p-3 sm:p-5">
+
+    <!-- KONTENER GŁÓWNY -->
+    <div class="max-w-6xl mx-auto space-y-4">
+
+        <!-- NAGŁÓWEK OPERACYJNY -->
+        <header class="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="flex items-start gap-3.5">
+                <div class="w-12 h-12 rounded-xl bg-red-600/20 border border-red-500/50 flex items-center justify-center text-2xl shrink-0 shadow-inner">
+                    🚒
+                </div>
+                <div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span class="bg-red-600 text-white text-xs font-black tracking-wider px-2 py-0.5 rounded shadow">
+                            DEMO — DANE FIKCYJNE
+                        </span>
+                        <span class="bg-slate-800 text-slate-300 text-xs font-semibold px-2 py-0.5 rounded border border-slate-700">
+                            SWD: MZ-POZAR-PRODUKCJA
+                        </span>
+                        <span class="text-xs text-slate-400 font-mono">
+                            Godz: 11:05
+                        </span>
+                    </div>
+                    <h1 class="text-xl sm:text-2xl font-black text-white tracking-tight mt-1">
+                        Halinów, ul. Piłsudskiego 48
+                    </h1>
+                    <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-400 mt-0.5">
+                        <span><strong>GPS:</strong> <code class="text-amber-400 font-mono font-semibold">52.2285, 21.354</code></span>
+                        <span><strong>Działka:</strong> 312/4 (0004 Halinów)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PRZYCISKI SZYBKICH AKCJI -->
+            <div class="flex flex-wrap items-center gap-2 no-print self-end md:self-center">
+                <button onclick="copyRadioBriefing()" class="px-3 py-2 bg-red-600 hover:bg-red-500 text-white text-xs font-bold rounded-lg shadow transition flex items-center gap-1.5">
+                    <span>📋</span> Kopiuj Meldunek
+                </button>
+                <a href="https://mapy.geoportal.gov.pl/imap/Imgp_2.html?locale=pl&gui=new&session=21.354,52.2285,2000" target="_blank" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold rounded-lg transition flex items-center gap-1.5">
+                    <span>🗺️</span> Geoportal
+                </a>
+                <a href="https://www.google.com/maps/search/?api=1&query=52.2285,21.354" target="_blank" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold rounded-lg transition flex items-center gap-1.5">
+                    <span>📍</span> Google Maps
+                </a>
+                <button onclick="window.print()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 text-xs font-semibold rounded-lg transition flex items-center gap-1">
+                    <span>🖨️</span> Drukuj / PDF
+                </button>
+            </div>
+        </header>
+
+        <!-- POWIADOMIENIE KOPIOWANIA -->
+        <div id="copyToast" class="hidden no-print fixed top-5 right-5 bg-emerald-600 text-white px-4 py-2.5 rounded-lg shadow-2xl text-xs font-bold z-50 flex items-center gap-2">
+            <span>✅</span> Skopiowano meldunek radiowy KDR do schowka!
+        </div>
+
+        <!-- UKŁAD DWUKOLUMNOWY -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+
+            <!-- LEWA KOLUMNA: PLAN SYTUACYJNY I RADAR (7 kolumn) -->
+            <div class="lg:col-span-7 space-y-4">
+
+                <!-- KARTA PLANU SYTUACYJNEGO -->
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-xl card-box">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="text-base">🎯</span>
+                            <h2 class="font-bold text-slate-100 text-sm tracking-wide uppercase">
+                                Schemat orientacyjny (500 m); tylko punkty o znanym azymucie
+                            </h2>
+                        </div>
+                        <span class="text-xs bg-slate-800 text-slate-300 px-2 py-0.5 rounded border border-slate-700">
+                            Orientacja Północ (N)
+                        </span>
+                    </div>
+
+                    <!-- KONTENER SVG RADARU -->
+                    <div class="aspect-square w-full max-w-[480px] mx-auto bg-slate-950 rounded-xl border border-slate-800 p-2 relative overflow-hidden shadow-inner flex items-center justify-center">
+                        
+    <svg viewBox="0 0 500 500" class="w-full h-full select-none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <!-- Gradient stożka dymu -->
+            <radialGradient id="smokeGradient" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#475569" stop-opacity="0.75" />
+                <stop offset="60%" stop-color="#334155" stop-opacity="0.45" />
+                <stop offset="100%" stop-color="#1E293B" stop-opacity="0.0" />
+            </radialGradient>
+            <!-- Wzór siatki militarnej/taktycznej -->
+            <pattern id="tacticalGrid" width="25" height="25" patternUnits="userSpaceOnUse">
+                <path d="M 25 0 L 0 0 0 25" fill="none" stroke="currentColor" stroke-opacity="0.07" stroke-width="1"/>
+            </pattern>
+        </defs>
+
+        <!-- Tło siatki -->
+        <rect width="500" height="500" fill="url(#tacticalGrid)" class="text-slate-400" />
+
+        <!-- Pierścienie odległości (100m, 200m, 300m, 500m) -->
+        <circle cx="250" cy="250" r="40.0" fill="none" stroke="#64748B" stroke-dasharray="3,3" stroke-width="1" opacity="0.35" />
+        <text x="294.0" y="246" font-size="8" fill="#94A3B8" opacity="0.8">100m</text>
+
+        <circle cx="250" cy="250" r="80.0" fill="none" stroke="#64748B" stroke-dasharray="3,3" stroke-width="1" opacity="0.35" />
+        <text x="334.0" y="246" font-size="8" fill="#94A3B8" opacity="0.8">200m</text>
+
+        <circle cx="250" cy="250" r="120.0" fill="none" stroke="#64748B" stroke-dasharray="3,3" stroke-width="1" opacity="0.3" />
+        <text x="374.0" y="246" font-size="8" fill="#94A3B8" opacity="0.7">300m</text>
+
+        <circle cx="250" cy="250" r="200.0" fill="none" stroke="#EF4444" stroke-dasharray="4,4" stroke-width="1.5" opacity="0.45" />
+        <text x="422.0" y="244" font-size="9" font-weight="bold" fill="#F87171" opacity="0.9">ZASIĘG 500m</text>
+
+        <!-- Osie krzyżowe N-S / W-E -->
+        <line x1="250" y1="20" x2="250" y2="480" stroke="#475569" stroke-width="1" opacity="0.3"/>
+        <line x1="20" y1="250" x2="480" y2="250" stroke="#475569" stroke-width="1" opacity="0.3"/>
+
+        <!-- Oznaczenia stron świata -->
+        <text x="250" y="16" text-anchor="middle" font-size="12" font-weight="bold" fill="#EF4444">N</text>
+        <text x="250" y="495" text-anchor="middle" font-size="11" font-weight="bold" fill="#64748B">S</text>
+        <text x="492" y="254" text-anchor="end" font-size="11" font-weight="bold" fill="#64748B">E</text>
+        <text x="8" y="254" text-anchor="start" font-size="11" font-weight="bold" fill="#64748B">W</text>
+
+        <!-- STOŻEK DYMU I ROZPRZESTRZENIANIA ZAGROŻENIA -->
+        <path d="M 250 250 L 418.52977748617513 108.58672586896134 A 220 220 0 0 1 456.73237657289985 325.24443153164714 Z"
+              fill="url(#smokeGradient)" stroke="#64748B" stroke-width="1" stroke-dasharray="3,3" opacity="0.8" />
+        
+        <!-- Wektor kierunku wiatru i znoszenia dymu -->
+        <g>
+            <line x1="250" y1="250" x2="417.4173180120754" y2="220.47980979662182"
+                  stroke="#F87171" stroke-width="2.5" stroke-dasharray="5,3" opacity="0.9"/>
+            <polygon points="432.18943430725847,217.87508713161787 
+                             414.40581344004937,214.91825963388243 
+                             416.4895915720526,226.73595267002895" 
+                     fill="#EF4444" />
+            <text x="370.3288528313429" y="230.89870045663764"
+                  font-size="9" font-weight="bold" fill="#FCA5A5">WEKTOR DYMU (80°)</text>
+        </g>
+
+        <!-- Warstwy infrastruktury -->
+        
+        <!-- Ciek wodny W1 -->
+        <g class="cursor-pointer group" >
+            <line x1="250" y1="250" x2="260.8073121007096" y2="373.52814256337643" stroke="#38BDF8" stroke-dasharray="2,4" stroke-width="1.5" opacity="0.4"/>
+            <circle cx="260.8073121007096" cy="373.52814256337643" r="12" fill="#0284C7" stroke="#38BDF8" stroke-width="2" />
+            <text x="260.8073121007096" y="377.52814256337643" text-anchor="middle" font-size="10" font-weight="bold" fill="#FFFFFF">💧</text>
+            <rect x="215.80731210070962" y="388.52814256337643" width="90" height="18" rx="4" fill="#0F172A" fill-opacity="0.85" stroke="#38BDF8" stroke-width="1"/>
+            <text x="260.8073121007096" y="400.52814256337643" text-anchor="middle" font-size="9" font-weight="600" fill="#7DD3FC">Ciek: 310m (M16/8)</text>
+        </g>
+        
+        
+        <!-- Hydrant H1 -->
+        <g class="cursor-pointer group" >
+            <!-- Linia węża do obiektu -->
+            <line x1="250" y1="250" x2="219.92983613485092" y2="260.9446445864214" stroke="#0EA5E9" stroke-dasharray="4,4" stroke-width="2" opacity="0.6"/>
+            <!-- Puls i marker -->
+            <circle cx="219.92983613485092" cy="260.9446445864214" r="15" fill="#0EA5E9" fill-opacity="0.25" class="animate-pulse" />
+            <circle cx="219.92983613485092" cy="260.9446445864214" r="10" fill="#0EA5E9" stroke="#0284C7" stroke-width="2" />
+            <text x="219.92983613485092" y="264.4446445864214" text-anchor="middle" font-size="9" font-weight="bold" fill="#FFFFFF">H</text>
+            <!-- Etykieta -->
+            <rect x="183.92983613485092" y="274.9446445864214" width="72" height="18" rx="4" fill="#0F172A" fill-opacity="0.85" stroke="#0EA5E9" stroke-width="1"/>
+            <text x="219.92983613485092" y="286.9446445864214" text-anchor="middle" font-size="9" font-weight="600" fill="#E2E8F0">H1: 80m (5xW)</text>
+        </g>
+        
+        <!-- Hydrant H2 -->
+        <g class="cursor-pointer group" >
+            <!-- Linia węża do obiektu -->
+            <line x1="250" y1="250" x2="201.148141663823" y2="191.7806223229577" stroke="#F59E0B" stroke-dasharray="4,4" stroke-width="2" opacity="0.6"/>
+            <!-- Puls i marker -->
+            <circle cx="201.148141663823" cy="191.7806223229577" r="15" fill="#F59E0B" fill-opacity="0.25" class="animate-pulse" />
+            <circle cx="201.148141663823" cy="191.7806223229577" r="10" fill="#F59E0B" stroke="#D97706" stroke-width="2" />
+            <text x="201.148141663823" y="195.2806223229577" text-anchor="middle" font-size="9" font-weight="bold" fill="#FFFFFF">HP</text>
+            <!-- Etykieta -->
+            <rect x="165.148141663823" y="205.7806223229577" width="72" height="18" rx="4" fill="#0F172A" fill-opacity="0.85" stroke="#F59E0B" stroke-width="1"/>
+            <text x="201.148141663823" y="217.7806223229577" text-anchor="middle" font-size="9" font-weight="600" fill="#E2E8F0">H2: 190m (11xW)</text>
+        </g>
+        
+
+        <!-- MIEJSCE ZDARZENIA (GROUND ZERO) -->
+        <g class="cursor-pointer">
+            <circle cx="250" cy="250" r="22" fill="#DC2626" fill-opacity="0.2" class="animate-ping" />
+            <circle cx="250" cy="250" r="14" fill="#B91C1C" stroke="#F87171" stroke-width="2" />
+            <text x="250" y="254.5" text-anchor="middle" font-size="11">🔥</text>
+            <rect x="200" y="220" width="100" height="17" rx="3" fill="#991B1B" stroke="#FECACA" stroke-width="1"/>
+            <text x="250" y="232" text-anchor="middle" font-size="8.5" font-weight="bold" fill="#FFFFFF">CEL: UL. PIŁSUDSKIEGO</text>
+        </g>
+    </svg>
+    
+                    </div>
+
+                    <!-- LEGENDA TAKTYCZNA -->
+                    <div class="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-2 pt-3 border-t border-slate-800/80 text-[11px] text-slate-300">
+                        <div class="flex items-center gap-1.5">
+                            <span class="w-3 h-3 rounded-full bg-red-600 inline-block"></span>
+                            <span>Cel / Ognisko</span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <span class="w-3 h-3 rounded-full bg-sky-500 inline-block"></span>
+                            <span>Hydrant nadziemny</span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <span class="w-3 h-3 rounded-full bg-amber-500 inline-block"></span>
+                            <span>Hydrant podziemny</span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <span class="w-3 h-3 rounded bg-slate-600 inline-block opacity-75"></span>
+                            <span>Stożek dymu</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ZAGROŻENIA I MEDIA (GESUT) -->
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-xl card-box">
+                    <div class="flex items-center gap-2 pb-3 border-b border-slate-800 mb-3">
+                        <span class="text-base">⚠️</span>
+                        <h2 class="font-bold text-slate-100 text-sm tracking-wide uppercase">
+                            Zagrożenia i Media (GESUT / Teren)
+                        </h2>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <!-- GAZ -->
+                        <div class="p-3 rounded-lg border border-amber-900/50 bg-amber-950/20">
+                            <div class="flex items-center gap-2 text-amber-400 font-bold text-xs uppercase mb-1">
+                                <span>🔥</span> SIEĆ GAZOWA
+                            </div>
+                            <p class="text-xs text-slate-200 font-semibold">Gazociąg średniego ciśnienia ś/c PE DN90</p>
+                            <p class="text-xs text-amber-300/90 mt-1">Główny zawór odcinający w żółtej szafce przy bramie wjazdowej (odcięcie natychmiastowe)</p>
+                            <span class="mt-2 inline-block text-[11px] font-bold text-amber-400 bg-amber-950/80 px-2 py-0.5 rounded border border-amber-700/60">
+                                KRYTYCZNE - zakręcić zawór główny przed halą
+                            </span>
+                        </div>
+
+                        <!-- ELEKTROENERGETYKA -->
+                        <div class="p-3 rounded-lg border border-red-900/50 bg-red-950/20">
+                            <div class="flex items-center gap-2 text-red-400 font-bold text-xs uppercase mb-1">
+                                <span>⚡</span> ENERGETYKA I TRAFO
+                            </div>
+                            <p class="text-xs text-slate-200 font-semibold">Stacja transformatorowa kontenerowa 15/0.4 kV w odl. 85m (kierunek NW)</p>
+                            <p class="text-xs text-slate-300 mt-1">Kabel podziemny SN 15 kV + napowietrzna sieć oświetleniowa</p>
+                            <p class="text-[11px] text-red-300 font-medium mt-1">⚠️ Hala wyposażona w instalację PV 40 kWp na dachu (falowniki w osobnym pomieszczeniu technicznym na ścianie zachodniej)</p>
+                        </div>
+                    </div>
+
+                    <!-- DOJAZD POŻAROWY -->
+                    <div class="mt-3 p-3 rounded-lg border border-slate-700 bg-slate-800/60">
+                        <div class="flex items-center justify-between">
+                            <div class="text-xs font-bold text-slate-200 uppercase flex items-center gap-1.5">
+                                <span>🚛</span> DOJAZD POŻAROWY I TONAŻ (GCBA)
+                            </div>
+                            <span class="text-[11px] bg-emerald-950 text-emerald-300 border border-emerald-700 px-2 py-0.5 rounded font-bold">
+                                Pełna dostępność dla ciężkich samochodów GCBA i drabin mechanicznych SD-30
+                            </span>
+                        </div>
+                        <p class="text-xs text-slate-300 mt-1.5">Droga powiatowa asfaltowa 6.0 m, pobocza utwardzone</p>
+                        <p class="text-xs text-slate-400 mt-0.5"><strong class="text-slate-300">Wąskie gardła:</strong> Brama wjazdowa szeroka (6.5 m), plac manewrowy przed halą utwardzony kostką</p>
+                    </div>
+
+                    <!-- DODATKOWE ZAGROŻENIA -->
+                    
+                    <div class="mt-3 p-3 rounded-lg border border-amber-800/40 bg-amber-950/10">
+                        <div class="text-xs font-bold text-amber-300 uppercase mb-1.5">Zidentyfikowane materiały niebezpieczne:</div>
+                        <ul class="space-y-1"><li class='text-xs text-amber-200 flex items-start gap-1.5'><span class='text-amber-400 font-bold'>•</span> Zbiornik naziemny z olejem opałowym (2000 l) przy ścianie północnej</li><li class='text-xs text-amber-200 flex items-start gap-1.5'><span class='text-amber-400 font-bold'>•</span> Silos na trociny i pył drzewny (strefa zagrożenia wybuchem EX)</li><li class='text-xs text-amber-200 flex items-start gap-1.5'><span class='text-amber-400 font-bold'>•</span> Butle z gazami technicznymi (acetylen, tlen) w warsztacie podręcznym</li></ul>
+                    </div>
+                    
+                </div>
+            </div>
+
+            <!-- PRAWA KOLUMNA: METEO, WODA I MELDUNEK (5 kolumn) -->
+            <div class="lg:col-span-5 space-y-4">
+
+                <!-- WARUNKI METEO I WEKTOR WIATRU -->
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-xl card-box">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="text-base">💨</span>
+                            <h2 class="font-bold text-slate-100 text-sm tracking-wide uppercase">
+                                Warunki Meteo — Stacja IMGW Sulejówek / Mińsk Maz.
+                            </h2>
+                        </div>
+                        <span class="text-xs text-slate-400">
+                            5.8 km od celu
+                        </span>
+                    </div>
+
+                    <div class="flex items-center justify-between gap-4">
+                        <!-- TARCZA RÓŻY WIATRÓW -->
+                        <div class="relative w-28 h-28 shrink-0 flex items-center justify-center bg-slate-950 rounded-full border border-slate-800 shadow-inner">
+                            <!-- Litery kierunków -->
+                            <span class="absolute top-1 text-[10px] font-bold text-red-500">N</span>
+                            <span class="absolute bottom-1 text-[10px] font-bold text-slate-500">S</span>
+                            <span class="absolute right-1.5 text-[10px] font-bold text-slate-500">E</span>
+                            <span class="absolute left-1.5 text-[10px] font-bold text-slate-500">W</span>
+                            <!-- Igła wiatrowskazu -->
+                            <div class="w-1.5 h-16 bg-gradient-to-t from-slate-600 via-amber-400 to-red-500 rounded-full shadow-lg transition-transform duration-700"
+                                 style="transform: rotate(260deg);">
+                            </div>
+                            <div class="w-3.5 h-3.5 bg-white rounded-full border-2 border-slate-900 z-10"></div>
+                        </div>
+
+                        <!-- DANE LICZBOWE -->
+                        <div class="space-y-1.5 flex-1">
+                            <div>
+                                <span class="text-xs text-slate-400 block">Kierunek wiatru</span>
+                                <span class="text-lg font-black text-white">Zachodni</span>
+                                <span class="text-xs font-mono text-amber-400 block font-bold">(W, 260°)</span>
+                            </div>
+                            <div class="pt-1 border-t border-slate-800 flex items-baseline justify-between">
+                                <span class="text-xs text-slate-400">Prędkość:</span>
+                                <span class="text-base font-bold text-slate-100">24 km/h <span class="text-xs text-slate-400 font-normal">(6.7 m/s)</span></span>
+                            </div>
+                            <div class="flex items-baseline justify-between">
+                                <span class="text-xs text-slate-400">W porywach:</span>
+                                <span class="text-base font-black text-red-400">do 48 km/h</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STREFA ZAGROŻENIA ZADYMIENIEM -->
+                    <div class="mt-3.5 p-3 rounded-lg bg-red-950/30 border border-red-800/50">
+                        <div class="flex items-center gap-1.5 text-red-400 text-xs font-bold uppercase">
+                            <span>🔥</span> SEKTOR ZADYMIENIA I SKAŻENIA:
+                        </div>
+                        <p class="text-xs font-bold text-red-200 mt-1">E (Wschód, ~80°)</p>
+                        <div class="mt-2 text-xs text-slate-300">
+                            <span class="text-slate-400 block font-semibold">Obiekty bezpośrednio zagrożone:</span>
+                            <ul class="list-disc list-inside space-y-0.5 mt-1 text-slate-300">
+                                <li>Skład tarcicy i palet drewnianych w sektorze zawietrznym (odl. 45 m na wschód)</li><li>Sąsiednia hala magazynowa ul. Piłsudskiego 50 (odl. 90 m)</li><li>Lokalna stacja paliw (sektor ENE, odl. 260 m - monitorować zarzewia ognia!)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ZAOPATRZENIE WODNE -->
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-xl card-box">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="text-base">🚒</span>
+                            <h2 class="font-bold text-slate-100 text-sm tracking-wide uppercase">
+                                Zaopatrzenie Wodne
+                            </h2>
+                        </div>
+                        <span class="text-xs bg-sky-950 text-sky-300 px-2 py-0.5 rounded border border-sky-800 font-semibold">
+                            Węże W-75 (20m)
+                        </span>
+                    </div>
+
+                    <div class="space-y-2.5">
+                        
+        <div class="p-3.5 rounded-lg border border-slate-700 bg-slate-800/80 hover:border-slate-500 transition-all">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <span class="px-2 py-0.5 rounded text-xs font-bold border bg-sky-900/60 border-sky-500 text-sky-200">
+                        H1 • NADZIEMNY
+                    </span>
+                    <span class="text-sm font-semibold text-slate-100">DN100</span>
+                </div>
+                <div class="text-right">
+                    <span class="text-lg font-black text-amber-400">80 m</span>
+                    <span class="text-xs text-slate-400 block">od celu</span>
+                </div>
+            </div>
+            <div class="mt-2.5 flex items-center justify-between text-xs text-slate-300 border-t border-slate-700/60 pt-2">
+                <span class="text-slate-400">ul. Piłsudskiego 42, naprzeciwko bramy</span>
+                <span class="font-bold text-sky-400 bg-sky-950/80 px-2 py-1 rounded border border-sky-800/50">
+                    🚒 ~5 odcinków W-75
+                </span>
+            </div>
+            
+        </div>
+        
+        <div class="p-3.5 rounded-lg border border-slate-700 bg-slate-800/80 hover:border-slate-500 transition-all">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <span class="px-2 py-0.5 rounded text-xs font-bold border bg-amber-900/60 border-amber-500 text-amber-200">
+                        H2 • PODZIEMNY
+                    </span>
+                    <span class="text-sm font-semibold text-slate-100">DN80</span>
+                </div>
+                <div class="text-right">
+                    <span class="text-lg font-black text-amber-400">190 m</span>
+                    <span class="text-xs text-slate-400 block">od celu</span>
+                </div>
+            </div>
+            <div class="mt-2.5 flex items-center justify-between text-xs text-slate-300 border-t border-slate-700/60 pt-2">
+                <span class="text-slate-400">Zbieg ul. Piłsudskiego i Polnej (chodnik)</span>
+                <span class="font-bold text-sky-400 bg-sky-950/80 px-2 py-1 rounded border border-sky-800/50">
+                    🚒 ~11 odcinków W-75
+                </span>
+            </div>
+            
+        <div class="mt-2 text-xs font-semibold text-amber-300 bg-amber-950/70 p-2 rounded border border-amber-600/60 flex items-center gap-1.5">
+            <span>⚠️</span> <span>WYMAGANY STOJAK HYDRANTOWY I KLUCZ PODZIEMNY!</span>
+        </div>
+        
+        </div>
+        
+                        
+        <div class="p-3.5 rounded-lg border border-cyan-800/60 bg-cyan-950/30">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <span class="text-base">🌊</span>
+                    <span class="text-sm font-bold text-cyan-200">Staw ppoż. / zbiornik retencyjny</span>
+                </div>
+                <span class="text-base font-bold text-cyan-400">310 m</span>
+            </div>
+            <div class="mt-2 text-xs text-slate-300 space-y-1">
+                <div><strong class="text-slate-400">Sprzęt ssawny:</strong> Motopompa Tohatsu M16/8, punkt stały poboru wody</div>
+                <div><strong class="text-slate-400">Dojazd i brzeg:</strong> Dojazd utwardzony płytami betonowymi, plac manewrowy dla autocysterny</div>
+            </div>
+        </div>
+        
+                    </div>
+                </div>
+
+                <!-- MELDUNEK RADIOWY KDR -->
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-xl card-box no-print">
+                    <div class="flex items-center justify-between pb-2 border-b border-slate-800 mb-2">
+                        <div class="flex items-center gap-2">
+                            <span class="text-base">📻</span>
+                            <h3 class="font-bold text-slate-200 text-xs tracking-wider uppercase">
+                                Gotowy Meldunek Radiowy KDR
+                            </h3>
+                        </div>
+                    </div>
+                    <textarea id="radioBriefingText" readonly rows="4" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-300 font-mono resize-none focus:outline-none">Projekt meldunku do potwierdzenia przez KDR. Adres: Halinów, ul. Piłsudskiego 48. Wiatr: W, 24 km/h. Punkty hydrantowe w danych: 2; sprawność wymaga potwierdzenia. Gaz: Gazociąg średniego ciśnienia ś/c PE DN90.</textarea>
+                    <button onclick="copyRadioBriefing()" class="w-full mt-2 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-lg border border-slate-700 transition flex items-center justify-center gap-1.5">
+                        <span>📋</span> Kopiuj do schowka
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+        <section class="card-box p-4"><h2>Uwagi taktyczne — do oceny KDR</h2><ul></ul></section>
+        <!-- STOPKA -->
+        <footer class="pt-2 text-center text-xs text-slate-500 no-print border-t border-slate-800/60">
+            AgentStraz • System Rozpoznania Taktycznego KDR OSP/PSP • Wygenerowano automatycznie
+        </footer>
+
+    </div>
+
+    <!-- SKRYPTY INTERAKTYWNE -->
+    <script>
+        function copyRadioBriefing() {
+            const text = document.getElementById('radioBriefingText').value;
+            navigator.clipboard.writeText(text).then(() => {
+                const toast = document.getElementById('copyToast');
+                toast.classList.remove('hidden');
+                setTimeout(() => {
+                    toast.classList.add('hidden');
+                }, 3000);
+            }).catch(err => {
+                console.error('Błąd kopiowania:', err);
+            });
+        }
+
+        function highlightElement(id) {
+            console.log("Wybrano obiekt taktyczny:", id);
+        }
+    </script>
+</body>
+</html>

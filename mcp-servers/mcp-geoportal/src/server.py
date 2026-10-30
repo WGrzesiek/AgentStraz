@@ -4,6 +4,7 @@ Udostępnia narzędzia geodezyjne i infrastrukturalne GUGiK / Geoportal dla Agen
 """
 
 import re
+import asyncio
 from typing import Optional, Dict, Any
 from mcp.server.fastmcp import FastMCP
 
@@ -11,6 +12,8 @@ from .uug_client import geocode_address as uug_geocode
 from .uldk_client import get_parcel_by_coords
 from .kiut_client import query_utilities_gesut, generate_kiut_map_url
 from .coords import wgs84_to_puwg1992
+from .building_client import get_building_details as fetch_building_details
+from .hydrant_client import get_hydrants_near_point as fetch_hydrants
 
 # Inicjalizacja serwera FastMCP
 mcp = FastMCP(
@@ -53,6 +56,29 @@ async def geocode_address(address: str) -> Dict[str, Any]:
         },
         "source": res.source,
     }
+
+
+@mcp.tool()
+async def get_hydrants_near_point(lat: float, lon: float, radius_m: int = 500) -> Dict[str, Any]:
+    """Hydranty Geoportalu K-GESUT: GPS, dystans i kierunek od ogniska pożaru.
+
+    Promień 10–3000 m. Najbliższy spośród odczytanych punktów w promieniu;
+    odległość w linii prostej, sprawność i trasa W-75 do potwierdzenia.
+    Zwraca status, źródło, czas pobrania oraz listę hydrants dla raportu.
+    """
+    return await fetch_hydrants(lat, lon, radius_m)
+
+
+@mcp.tool()
+async def get_building_details(lat: float, lon: float, building_id: Optional[str] = None) -> Dict[str, Any]:
+    """Obrys, wysokość i szacunkowa kubatura: GUGiK CityGML LoD1/LoD2, EGiB WFS, OSM.
+
+    Bez klucza API. Gdy punkt nie wskazuje jednoznacznie budynku, zwraca kandydatów.
+    Potwierdzony id można przekazać ponownie jako building_id. Pole building jest
+    wejściem kalkulatora i raportu; nie zastępuje rozpoznanej powierzchni gaszenia.
+    Pierwszy odczyt modeli wymaga pobrania paczki powiatowej, kolejne używają cache.
+    """
+    return await fetch_building_details(lat, lon, building_id=building_id)
 
 
 @mcp.tool()
@@ -157,9 +183,11 @@ async def full_site_recon(address_or_coords: str) -> Dict[str, Any]:
         lon = geo.lon
         full_addr = geo.full_address
 
-    # Równoległe pobranie działki i uzbrojenia terenu
-    parcel = await get_parcel_by_coords(lat, lon)
-    utilities = await query_utilities_gesut(lat, lon, radius_m=100)
+    parcel, utilities, buildings, hydrants = await asyncio.gather(
+        get_parcel_by_coords(lat, lon), query_utilities_gesut(lat, lon, radius_m=100),
+        fetch_building_details(lat, lon),
+        fetch_hydrants(lat, lon),
+    )
 
     return {
         "success": True,
@@ -170,6 +198,10 @@ async def full_site_recon(address_or_coords: str) -> Dict[str, Any]:
             "wgs84": f"{lat}, {lon}",
         },
         "parcel": parcel.to_dict() if parcel else None,
+        "building": buildings["building"],
+        "building_recon": buildings,
+        "hydrant_recon": hydrants,
+        "water_supply": {"hydrants": hydrants["hydrants"], "hydrant_recon": hydrants},
         "utilities": {
             "has_gas": utilities.has_gas,
             "gas_details": utilities.gas_details,
